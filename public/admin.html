@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Event Map - Admin</title>
+  
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="../src/css/style.css">
+  
+  <!-- Firebase SDK -->
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  
+  <!-- Application Scripts -->
+  <script defer src="../src/config/firebase.js"></script>
+  <script defer src="../src/js/script.js"></script>
+  <script defer src="../src/js/area-manager.js"></script>
+  <script defer src="../src/js/booth-init.js"></script>
+  <script defer src="../src/js/admin.js"></script>
+</head>
+
+<body class="is-admin-login">
+  <!-- Page Header -->
+  <header class="page-header">
+    <div class="header-content">
+      <button id="menuToggle" class="menu-toggle" aria-label="Toggle navigation menu" style="display: none;">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <h1 class="title">Event Map (Admin)</h1>
+      <p class="subtitle">Toggle booth status</p>
+    </div>
+  </header>
+
+  <!-- Navigation Sidebar -->
+  <nav id="sidebar" class="sidebar" role="navigation" aria-label="Admin navigation">
+    <div class="sidebar-header">
+      <div class="sidebar-title">
+        <h3>Admin Menu</h3>
+        <p id="userGreeting" class="user-greeting">Hello, user@example.com</p>
+      </div>
+      <button id="closeSidebar" class="close-btn" aria-label="Close menu">&times;</button>
+    </div>
+    
+    <div class="sidebar-content">
+      <ul class="nav-list" role="list">
+        <li role="listitem"><a href="#" id="tentone">Tent 1</a></li>
+        <li role="listitem"><a href="#" id="tenttwo">Tent 2</a></li>
+        <li role="listitem"><a href="#" id="tentthree">Tent 3</a></li>
+      </ul>
+      
+      <div class="sidebar-footer">
+        <button id="sidebarLogout" class="btn secondary logout-btn">Logout</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Sidebar Overlay -->
+  <div id="sidebarOverlay" class="sidebar-overlay" aria-hidden="true"></div>
+
+  <!-- Login Panel -->
+  <section id="loginPanel" class="panel" role="form" aria-labelledby="loginTitle">
+    <h2 id="loginTitle" class="sr-only">Admin Login</h2>
+    
+    <div class="form-group">
+      <label for="email">
+        <span>Email</span>
+        <input type="email" id="email" autocomplete="username" required>
+      </label>
+    </div>
+    
+    <div class="form-group">
+      <label for="password">
+        <span>Password</span>
+        <input type="password" id="password" autocomplete="current-password" required>
+      </label>
+    </div>
+    
+    <div class="form-group">
+      <label class="checkbox-label">
+        <input type="checkbox" id="keepSignedIn">
+        <span>Keep me signed in (1 day)</span>
+      </label>
+    </div>
+    
+    <div class="form-actions">
+      <button id="loginBtn" class="btn primary">Login</button>
+      <button id="logoutBtn" class="btn secondary" style="display: none;">Logout</button>
+    </div>
+    
+    <p id="loginMsg" class="msg" role="alert" aria-live="polite"></p>
+  </section>
+
+  <!-- Main Content Area -->
+  <main role="main">
+    <!-- Main Map View -->
+    <section class="map" id="map" aria-label="Admin booth control" style="display: none;">
+      <!-- Enhanced map layout with better visual design -->
+      <svg class="map-svg" viewBox="0 0 715 749" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Event map">
+        <!-- Background with subtle pattern -->
+        <defs>
+          <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+          </pattern>
+          <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a1f2e;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#151c26;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        
+        <rect width="715" height="749" fill="url(#bgGradient)"/>
+        <rect width="715" height="749" fill="url(#gridPattern)"/>
+        
+        <g id="group-1">
+          <!-- Main Areas (controlled by main booth system) -->
+          <rect id="tent3" class="area green" x="219" y="35" width="151" height="449" data-id="tent3" tabindex="0" role="button" aria-pressed="false" aria-label="Tent 3 (available)" />
+          <text x="294.5" y="265" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="600" font-family="system-ui" pointer-events="none">TENT 3</text>
+          
+          <rect id="tent2" class="area green" x="445" y="35" width="151" height="449" data-id="tent2" tabindex="0" role="button" aria-pressed="false" aria-label="Tent 2 (available)" />
+          <text x="520.5" y="265" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="600" font-family="system-ui" pointer-events="none">TENT 2</text>
+          
+          <rect id="tent1" class="area green" x="186" y="495" width="529" height="221" data-id="tent1" tabindex="0" role="button" aria-pressed="false" aria-label="Tent 1 (available)" />
+          <text x="450.5" y="615" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="600" font-family="system-ui" pointer-events="none">TENT 1</text>
+          
+          <rect id="psc_workshop1" class="area green" x="0" y="0" width="150" height="223" data-id="psc_workshop1" tabindex="0" role="button" aria-pressed="false" aria-label="PSC Workshop 1 (available)" />
+          <text x="75" y="105" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="12" font-weight="600" font-family="system-ui" pointer-events="none">PSC Workshop 1</text>
+          
+          <rect id="psc_workshop2" class="area green" x="0" y="252" width="150" height="225" data-id="psc_workshop2" tabindex="0" role="button" aria-pressed="false" aria-label="PSC Workshop 2 (available)" />
+          <text x="75" y="359" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="12" font-weight="600" font-family="system-ui" pointer-events="none">PSC Workshop 2</text>
+          
+
+          <!-- Tent 1 Individual Booths -->
+          <rect id="booth8"  class="area green" x="190" y="495" width="45" height="50" data-detailed-id="tent1_booth8"  aria-label="Booth 8 (available)" />
+          <rect id="booth9"  class="area green" x="327" y="495" width="45" height="50" data-detailed-id="tent1_booth9"  aria-label="Booth 9 (available)" />
+          <rect id="booth10" class="area green" x="394" y="495" width="45" height="50" data-detailed-id="tent1_booth10" aria-label="Booth 10 (available)" />
+          <rect id="booth11" class="area green" x="549" y="495" width="45" height="50" data-detailed-id="tent1_booth11" aria-label="Booth 11 (available)" />
+          <rect id="booth12" class="area green" x="606" y="495" width="45" height="50" data-detailed-id="tent1_booth12" aria-label="Booth 12 (available)" />
+          <rect id="booth13" class="area green" x="661" y="495" width="45" height="50" data-detailed-id="tent1_booth13" aria-label="Booth 13 (available)" />
+          <rect id="booth7"  class="area green" x="190" y="666" width="45" height="50" data-detailed-id="tent1_booth7"  aria-label="Booth 7 (available)" />
+          <rect id="booth6"  class="area green" x="282" y="666" width="45" height="50" data-detailed-id="tent1_booth6"  aria-label="Booth 6 (available)" />
+          <rect id="booth5"  class="area green" x="372" y="666" width="45" height="50" data-detailed-id="tent1_booth5"  aria-label="Booth 5 (available)" />
+          <rect id="booth4"  class="area green" x="442" y="666" width="45" height="50" data-detailed-id="tent1_booth4"  aria-label="Booth 4 (available)" />
+          <rect id="booth3"  class="area green" x="504" y="666" width="45" height="50" data-detailed-id="tent1_booth3"  aria-label="Booth 3 (available)" />
+          <rect id="booth2"  class="area green" x="661" y="666" width="45" height="50" data-detailed-id="tent1_booth2"  aria-label="Booth 2 (available)" />
+
+
+          <!-- Tent 2 Individual Booths -->
+          <rect id="booth19" class="area green" x="445" y="63"  width="45" height="50" data-detailed-id="tent2_booth19" aria-label="Booth 19 (available)" />
+          <rect id="booth20" class="area green" x="445" y="128" width="45" height="50" data-detailed-id="tent2_booth20" aria-label="Booth 20 (available)" />
+          <rect id="booth21" class="area green" x="445" y="193" width="45" height="50" data-detailed-id="tent2_booth21" aria-label="Booth 21 (available)" />
+          <rect id="booth22" class="area green" x="445" y="307" width="45" height="50" data-detailed-id="tent2_booth22" aria-label="Booth 22 (available)" />
+          <rect id="booth23" class="area green" x="445" y="368" width="45" height="50" data-detailed-id="tent2_booth23" aria-label="Booth 23 (available)" />
+          <rect id="booth24" class="area green" x="445" y="434" width="45" height="50" data-detailed-id="tent2_booth24" aria-label="Booth 24 (available)" />
+          <rect id="booth18" class="area green" x="551" y="62"  width="45" height="50" data-detailed-id="tent2_booth18" aria-label="Booth 18 (available)" />
+          <rect id="booth17" class="area green" x="551" y="168" width="45" height="50" data-detailed-id="tent2_booth17" aria-label="Booth 17 (available)" />
+          <rect id="booth16" class="area green" x="551" y="235" width="45" height="50" data-detailed-id="tent2_booth16" aria-label="Booth 16 (available)" />
+          <rect id="booth15" class="area green" x="551" y="332" width="45" height="50" data-detailed-id="tent2_booth15" aria-label="Booth 15 (available)" />
+          <rect id="booth14" class="area green" x="551" y="401" width="45" height="50" data-detailed-id="tent2_booth14" aria-label="Booth 14 (available)" />
+
+
+          <!-- Tent 3 Detailed Booths -->
+          <rect id="booth30" class="area green" x="219" y="44"  width="45" height="50" data-detailed-id="tent3_booth30" aria-label="Booth 30 (available)" />
+          <rect id="booth31" class="area green" x="219" y="129" width="45" height="50" data-detailed-id="tent3_booth31" aria-label="Booth 31 (available)" />
+          <rect id="booth32" class="area green" x="219" y="198" width="45" height="50" data-detailed-id="tent3_booth32" aria-label="Booth 32 (available)" />
+          <rect id="booth33" class="area green" x="219" y="335" width="45" height="50" data-detailed-id="tent3_booth33" aria-label="Booth 33 (available)" />
+          <rect id="booth34" class="area green" x="219" y="410" width="45" height="50" data-detailed-id="tent3_booth34" aria-label="Booth 34 (available)" />
+          <rect id="booth26" class="area green" x="325" y="364" width="45" height="50" data-detailed-id="tent3_booth26" aria-label="Booth 26 (available)" />
+          <rect id="booth29" class="area green" x="325" y="78"  width="45" height="50" data-detailed-id="tent3_booth29" aria-label="Booth 29 (available)" />
+          <rect id="booth28" class="area green" x="325" y="154" width="45" height="50" data-detailed-id="tent3_booth28" aria-label="Booth 28 (available)" />
+          <rect id="booth27" class="area green" x="325" y="294" width="45" height="50" data-detailed-id="tent3_booth27" aria-label="Booth 27 (available)" />
+          <rect id="booth25" class="area green" x="325" y="434" width="45" height="50" data-detailed-id="tent3_booth25" aria-label="Booth 25 (available)" />
+
+          
+          <!-- Pathways and neutral areas -->
+          <rect id="entrance" x="556" y="716" width="88" height="33" fill="#D9D9D9" />
+          <rect id="pathway1" x="485" y="484" width="69" height="11" fill="#D9D9D9" />
+          <rect id="pathway2" x="258" y="484" width="69" height="11" fill="#D9D9D9" />
+          <rect id="pathway3" x="150" y="260" width="69" height="43" fill="#D9D9D9" />
+          <rect id="pathway4" x="372" y="240" width="73" height="42" fill="#D9D9D9" />
+          <rect id="pathway5" x="60" y="223" width="69" height="29" fill="#D9D9D9" />
+        </g>
+      </svg>
+
+      <!-- Additional Floor Plan -->
+      <svg class="map-svg" width="715" height="267" viewBox="0 0 715 267" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Additional floor plan">
+        <!-- Background with subtle pattern -->
+        <defs>
+          <pattern id="gridPattern2" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+          </pattern>
+          <linearGradient id="bgGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a1f2e;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#151c26;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        
+        <rect width="715" height="267" fill="url(#bgGradient2)"/>
+        <rect width="715" height="267" fill="url(#gridPattern2)"/>
+        
+        <rect id="plaza" class="area green" x="194.015" y="0" width="520.985" height="267" 
+              data-id="plaza" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" rx="8" tabindex="0" 
+              role="button" aria-pressed="false" aria-label="Plaza (available)" />
+        <text x="454.5" y="140" text-anchor="middle" fill="rgba(255,255,255,0.9)" 
+              font-size="16" font-weight="600" font-family="system-ui" pointer-events="none">Plaza</text>
+        
+        <rect id="ultralight_show" class="area green" x="0" y="0" width="170.379" height="102" 
+              data-id="ultralight_show" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" rx="8" tabindex="0" 
+              role="button" aria-pressed="false" aria-label="UltraLight Show (available)" />
+        <text x="85.2" y="56" text-anchor="middle" fill="rgba(255,255,255,0.9)" 
+              font-size="12" font-weight="600" font-family="system-ui" pointer-events="none">UltraLight Show</text>
+        
+        <rect id="great_hall" class="area green" x="0" y="149" width="170.379" height="118" 
+              data-id="great_hall" stroke="rgba(255,255,255,0.1)" stroke-width="1.5" rx="8" tabindex="0" 
+              role="button" aria-pressed="false" aria-label="Great Hall (available)" />
+        <text x="85.2" y="213" text-anchor="middle" fill="rgba(255,255,255,0.9)" 
+              font-size="12" font-weight="600" font-family="system-ui" pointer-events="none">Great Hall</text>
+      </svg>
+    </section>
+
+    <!-- Area Detail Views -->
+    <section class="area-detail" id="areaDetail" style="display: none;" role="region" aria-labelledby="areaTitle">
+      <div class="area-header">
+        <button id="backToMap" class="btn secondary back-btn" aria-label="Back to main map">
+          ← Back to Map
+        </button>
+        <h2 id="areaTitle">Area Details</h2>
+      </div>
+      
+      <div class="booth-grid" id="boothGrid" role="grid" aria-label="Booth controls">
+        <!-- Dynamic booth content will be inserted here -->
+      </div>
+    </section>
+  </main>
+</body>
+</html>

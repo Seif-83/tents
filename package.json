@@ -1,0 +1,23 @@
+{
+  "name": "event-map-app",
+  "version": "1.0.0",
+  "description": "Real-time event booth status tracking application",
+  "main": "public/index.html",
+  "scripts": {
+    "serve": "npx http-server public -p 8080",
+    "dev": "npx live-server public"
+  },
+  "keywords": [
+    "event",
+    "map",
+    "firebase",
+    "real-time",
+    "booth-tracking"
+  ],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "live-server": "^1.2.2"
+  }
+}

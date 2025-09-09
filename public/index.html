@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>SF Map</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <link rel="stylesheet" href="../src/css/style.css">
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script defer src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <script defer src="../src/config/firebase.js"></script>
+  <script defer src="../src/js/script.js"></script>
+  <script defer src="../src/js/area-manager.js"></script>
+  <script defer src="../src/js/booth-init.js"></script>
+</head>
+<body>
+  <!-- Bubble Animation Background -->
+  <canvas id="bubble-bg" style="position:fixed;top:0;left:0;width:100vw;height:100vh;z-index:-1;pointer-events:none;"></canvas>
+  <header class="page-header">
+    <h1 class="title">Science Festivity Event Map</h1>
+    <p class="subtitle">Booth availability</p>
+  </header>
+
+  <main>
+    <!-- Status Legend -->
+    <div class="status-legend">
+      <div class="legend-item">
+        <div class="legend-indicator available"></div>
+        <span>Available</span>
+      </div>
+      <div class="legend-item">
+        <div class="legend-indicator occupied"></div>
+        <span>Occupied</span>
+      </div>
+    </div>
+
+    <section class="map" id="map" aria-label="Booth status map">
+      <!-- Enhanced map layout with better visual design -->
+      <svg class="map-svg" viewBox="0 0 715 749" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Event map">
+        <!-- Background with subtle pattern -->
+        <defs>
+          <pattern id="gridPattern" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+          </pattern>
+          <linearGradient id="bgGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a1f2e;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#151c26;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        
+        <rect width="715" height="749" fill="url(#bgGradient)"/>
+        <rect width="715" height="749" fill="url(#gridPattern)"/>
+        
+        <g id="group-1">
+          <!-- Main Areas (controlled by main booth system) -->
+          <rect id="tent3" class="area green" x="219" y="35" width="151" height="449" data-id="tent3" tabindex="0" role="status" aria-label="Tent 3 (available)" />
+          <text x="294.5" y="265" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="600" font-family="system-ui" pointer-events="none">TENT 3</text>
+          
+          <rect id="tent2" class="area green" x="445" y="35" width="151" height="449" data-id="tent2" tabindex="0" role="status" aria-label="Tent 2 (available)" />
+          <text x="520.5" y="265" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="14" font-weight="600" font-family="system-ui" pointer-events="none">TENT 2</text>
+          
+          <rect id="tent1" class="area green" x="186" y="495" width="529" height="221" data-id="tent1" tabindex="0" role="status" aria-label="Tent 1 (available)" />
+          <text x="450.5" y="615" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="16" font-weight="600" font-family="system-ui" pointer-events="none">TENT 1</text>
+          
+          <rect id="psc_workshop1" class="area green" x="0" y="0" width="150" height="223" data-id="psc_workshop1" tabindex="0" role="status" aria-label="PSC Workshop 1 (available)" />
+          <text x="75" y="105" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="12" font-weight="600" font-family="system-ui" pointer-events="none">PSC Workshop 1</text>
+          
+          <rect id="psc_workshop2" class="area green" x="0" y="252" width="150" height="225" data-id="psc_workshop2" tabindex="0" role="status" aria-label="PSC Workshop 2 (available)" />
+          <text x="75" y="359" text-anchor="middle" fill="rgba(255,255,255,0.9)" font-size="12" font-weight="600" font-family="system-ui" pointer-events="none">PSC Workshop 2</text>
+          
+
+          <!-- Tent 1 Individual Booths -->
+          <rect id="booth8"  class="area green" x="190" y="495" width="45" height="50" data-detailed-id="tent1_booth8"  aria-label="Booth 8 (available)" />
+          <text x="212.5" y="520" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">8</text>
+          <rect id="booth9"  class="area green" x="327" y="495" width="45" height="50" data-detailed-id="tent1_booth9"  aria-label="Booth 9 (available)" />
+          <text x="349.5" y="520" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">9</text>
+          <rect id="booth10" class="area green" x="394" y="495" width="45" height="50" data-detailed-id="tent1_booth10" aria-label="Booth 10 (available)" />
+          <text x="416.5" y="520" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">10</text>
+          <rect id="booth11" class="area green" x="549" y="495" width="45" height="50" data-detailed-id="tent1_booth11" aria-label="Booth 11 (available)" />
+          <text x="571.5" y="520" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">11</text>
+          <rect id="booth12" class="area green" x="606" y="495" width="45" height="50" data-detailed-id="tent1_booth12" aria-label="Booth 12 (available)" />
+          <text x="628.5" y="520" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">12</text>
+          <rect id="booth13" class="area green" x="661" y="495" width="45" height="50" data-detailed-id="tent1_booth13" aria-label="Booth 13 (available)" />
+          <text x="683.5" y="520" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">13</text>
+          <rect id="booth7"  class="area green" x="190" y="666" width="45" height="50" data-detailed-id="tent1_booth7"  aria-label="Booth 7 (available)" />
+          <text x="212.5" y="691" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">7</text>
+          <rect id="booth6"  class="area green" x="282" y="666" width="45" height="50" data-detailed-id="tent1_booth6"  aria-label="Booth 6 (available)" />
+          <text x="304.5" y="691" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">6</text>
+          <rect id="booth5"  class="area green" x="372" y="666" width="45" height="50" data-detailed-id="tent1_booth5"  aria-label="Booth 5 (available)" />
+          <text x="394.5" y="691" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">5</text>
+          <rect id="booth4"  class="area green" x="442" y="666" width="45" height="50" data-detailed-id="tent1_booth4"  aria-label="Booth 4 (available)" />
+          <text x="464.5" y="691" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">4</text>
+          <rect id="booth3"  class="area green" x="504" y="666" width="45" height="50" data-detailed-id="tent1_booth3"  aria-label="Booth 3 (available)" />
+          <text x="526.5" y="691" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">3</text>
+          <rect id="booth2"  class="area green" x="661" y="666" width="45" height="50" data-detailed-id="tent1_booth2"  aria-label="Booth 2 (available)" />
+          <text x="683.5" y="691" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">2</text>
+
+
+          <!-- Tent 2 Individual Booths -->
+          <rect id="booth19" class="area green" x="445" y="63"  width="45" height="50" data-detailed-id="tent2_booth19" aria-label="Booth 19 (available)" />
+          <text x="467.5" y="88" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">19</text>
+          <rect id="booth20" class="area green" x="445" y="128" width="45" height="50" data-detailed-id="tent2_booth20" aria-label="Booth 20 (available)" />
+          <text x="467.5" y="153" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">20</text>
+          <rect id="booth21" class="area green" x="445" y="193" width="45" height="50" data-detailed-id="tent2_booth21" aria-label="Booth 21 (available)" />
+          <text x="467.5" y="218" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">21</text>
+          <rect id="booth22" class="area green" x="445" y="307" width="45" height="50" data-detailed-id="tent2_booth22" aria-label="Booth 22 (available)" />
+          <text x="467.5" y="332" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">22</text>
+          <rect id="booth23" class="area green" x="445" y="368" width="45" height="50" data-detailed-id="tent2_booth23" aria-label="Booth 23 (available)" />
+          <text x="467.5" y="393" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">23</text>
+          <rect id="booth24" class="area green" x="445" y="434" width="45" height="50" data-detailed-id="tent2_booth24" aria-label="Booth 24 (available)" />
+          <text x="467.5" y="459" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">24</text>
+          <rect id="booth18" class="area green" x="551" y="62"  width="45" height="50" data-detailed-id="tent2_booth18" aria-label="Booth 18 (available)" />
+          <text x="573.5" y="87" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">18</text>
+          <rect id="booth17" class="area green" x="551" y="168" width="45" height="50" data-detailed-id="tent2_booth17" aria-label="Booth 17 (available)" />
+          <text x="573.5" y="193" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">17</text>
+          <rect id="booth16" class="area green" x="551" y="235" width="45" height="50" data-detailed-id="tent2_booth16" aria-label="Booth 16 (available)" />
+          <text x="573.5" y="260" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">16</text>
+          <rect id="booth15" class="area green" x="551" y="332" width="45" height="50" data-detailed-id="tent2_booth15" aria-label="Booth 15 (available)" />
+          <text x="573.5" y="357" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">15</text>
+          <rect id="booth14" class="area green" x="551" y="401" width="45" height="50" data-detailed-id="tent2_booth14" aria-label="Booth 14 (available)" />
+          <text x="573.5" y="426" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">14</text>
+
+
+          <!-- Tent 3 Detailed Booths -->
+          <rect id="booth30" class="area green" x="219" y="44"  width="45" height="50" data-detailed-id="tent3_booth30" aria-label="Booth 30 (available)" />
+          <text x="241.5" y="69" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">30</text>
+          <rect id="booth31" class="area green" x="219" y="129" width="45" height="50" data-detailed-id="tent3_booth31" aria-label="Booth 31 (available)" />
+          <text x="241.5" y="154" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">31</text>
+          <rect id="booth32" class="area green" x="219" y="198" width="45" height="50" data-detailed-id="tent3_booth32" aria-label="Booth 32 (available)" />
+          <text x="241.5" y="223" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">32</text>
+          <rect id="booth33" class="area green" x="219" y="335" width="45" height="50" data-detailed-id="tent3_booth33" aria-label="Booth 33 (available)" />
+          <text x="241.5" y="360" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">33</text>
+          <rect id="booth34" class="area green" x="219" y="410" width="45" height="50" data-detailed-id="tent3_booth34" aria-label="Booth 34 (available)" />
+          <text x="241.5" y="435" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">34</text>
+          <rect id="booth26" class="area green" x="325" y="364" width="45" height="50" data-detailed-id="tent3_booth26" aria-label="Booth 26 (available)" />
+          <text x="347.5" y="389" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">26</text>
+          <rect id="booth29" class="area green" x="325" y="78"  width="45" height="50" data-detailed-id="tent3_booth29" aria-label="Booth 29 (available)" />
+          <text x="347.5" y="103" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">29</text>
+          <rect id="booth28" class="area green" x="325" y="154" width="45" height="50" data-detailed-id="tent3_booth28" aria-label="Booth 28 (available)" />
+          <text x="347.5" y="179" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">28</text>
+          <rect id="booth27" class="area green" x="325" y="294" width="45" height="50" data-detailed-id="tent3_booth27" aria-label="Booth 27 (available)" />
+          <text x="347.5" y="319" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">27</text>
+          <rect id="booth25" class="area green" x="325" y="434" width="45" height="50" data-detailed-id="tent3_booth25" aria-label="Booth 25 (available)" />
+          <text x="347.5" y="459" text-anchor="middle" alignment-baseline="middle" font-size="18" font-weight="bold" fill="#222">25</text>
+
+          
+          <!-- Pathways and neutral areas -->
+          <rect id="entrance" x="556" y="716" width="88" height="33" fill="#D9D9D9" />
+          <rect id="pathway1" x="485" y="484" width="69" height="11" fill="#D9D9D9" />
+          <rect id="pathway2" x="258" y="484" width="69" height="11" fill="#D9D9D9" />
+          <rect id="pathway3" x="150" y="260" width="69" height="43" fill="#D9D9D9" />
+          <rect id="pathway4" x="372" y="240" width="73" height="42" fill="#D9D9D9" />
+          <rect id="pathway5" x="60" y="223" width="69" height="29" fill="#D9D9D9" />
+        </g>
+      </svg>
+    </section>
+
+    <!-- Additional Floor Plan -->
+    <section class="map" id="additional-map" aria-label="Additional floor plan">
+      <svg class="map-svg" width="715" height="267" viewBox="0 0 715 267" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Additional floor plan">
+        <!-- Background with subtle pattern -->
+        <defs>
+          <pattern id="gridPattern2" width="20" height="20" patternUnits="userSpaceOnUse">
+            <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.02)" stroke-width="1"/>
+          </pattern>
+          <linearGradient id="bgGradient2" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#1a1f2e;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#151c26;stop-opacity:1" />
+          </linearGradient>
+        </defs>
+        
+        <rect width="715" height="267" fill="url(#bgGradient2)"/>
+        <rect width="715" height="267" fill="url(#gridPattern2)"/>
+        
+        <rect id="plaza" class="area green" x="194.015" y="0" width="520.985" height="267" 
+              stroke="rgba(255,255,255,0.1)" stroke-width="1.5" rx="8" tabindex="0" 
+              role="status" aria-label="Plaza (available)" />
+        <text x="454.5" y="140" text-anchor="middle" fill="rgba(255,255,255,0.9)" 
+              font-size="16" font-weight="600" font-family="system-ui" pointer-events="none">Plaza Stage</text>
+        
+        <rect id="ultralight_show" class="area green" x="0" y="0" width="170.379" height="102" 
+              stroke="rgba(255,255,255,0.1)" stroke-width="1.5" rx="8" tabindex="0" 
+              role="status" aria-label="UltraLight Show (available)" />
+        <text x="85.2" y="56" text-anchor="middle" fill="rgba(255,255,255,0.9)" 
+              font-size="12" font-weight="600" font-family="system-ui" pointer-events="none">UltraLight Show</text>
+        
+        <rect id="great_hall" class="area green" x="0" y="149" width="170.379" height="118" 
+              stroke="rgba(255,255,255,0.1)" stroke-width="1.5" rx="8" tabindex="0" 
+              role="status" aria-label="Great Hall (available)" />
+        <text x="85.2" y="213" text-anchor="middle" fill="rgba(255,255,255,0.9)" 
+              font-size="12" font-weight="600" font-family="system-ui" pointer-events="none">Great Hall</text>
+      </svg>
+    </section>
+  </main>
+  
+  <footer class="page-footer">
+    <div class="footer-content">
+      <div class="footer-links">
+        <a href="https://forms.gle/BtnVVydgFTo3Vbah9" target="_blank" rel="noopener noreferrer" class="footer-link">
+          🗓️ Event Timetable
+        </a>
+      </div>
+    </div>
+  </footer>
+
+</body>
+<script>
+// Bubble animation background
+const canvas = document.getElementById('bubble-bg');
+const ctx = canvas.getContext('2d');
+let bubbles = [];
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
+
+function createBubble() {
+  const radius = Math.random() * 24 + 12;
+  return {
+    x: Math.random() * canvas.width,
+    y: canvas.height + radius,
+    r: radius,
+    speed: Math.random() * 1.5 + 0.5,
+    opacity: Math.random() * 0.4 + 0.2,
+    color: `rgba(173,216,230,${Math.random() * 0.3 + 0.2})`
+  };
+}
+
+function drawBubbles() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  for (let b of bubbles) {
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.r, 0, Math.PI * 2);
+    ctx.fillStyle = b.color;
+    ctx.globalAlpha = b.opacity;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+  }
+}
+
+function updateBubbles() {
+  for (let b of bubbles) {
+    b.y -= b.speed;
+    b.x += Math.sin(b.y / 50) * 0.5;
+  }
+  bubbles = bubbles.filter(b => b.y + b.r > 0);
+  while (bubbles.length < 40) {
+    bubbles.push(createBubble());
+  }
+}
+
+function animate() {
+  updateBubbles();
+  drawBubbles();
+  requestAnimationFrame(animate);
+}
+animate();
+</script>
+</html>
